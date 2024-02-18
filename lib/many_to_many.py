@@ -1,3 +1,5 @@
+
+
 class Author:
     all_authors = []
 
@@ -9,12 +11,15 @@ class Author:
         Author.all_authors.append(self)
 
     def contracts(self):
-        print(self.contract_list)  # Add this line to check the contract_list
-        return self.contract_list
+        print(Contract.all)
+        return [contract for contract in Contract.all if contract.author == self ]
+    
 
     def books(self):
-        pass
+        return [contract.book for contract in Contract.all if contract.author == self ]
+    
 
+       
     def sign_contract(self, book, date, royalties):
         contract = Contract(self, book, date, royalties)
         self.contract_list.append(contract)
@@ -22,11 +27,9 @@ class Author:
     
     def total_royalties(self):
         total = 0
-        for contract in self.contract_list:
-            total += contract.royalties
+        for contract in self.contracts():
+           total += contract.royalties
         return total
-
-
 
 
 
@@ -38,17 +41,15 @@ class Book:
         self.title = title 
         Book.all_books.append(self)
 
-    def set_title(self, new_title):
-        if isinstance(new_title, str):
-            self.title = new_title
-        else:
-            raise ValueError('Invalid title format. Please provide a string.')
+    def contracts(self):
+      return [contract for contract in Contract.all if contract.book == self]
 
-
-
+    def authors(self):
+       return [contract.author for contract in Contract.all if contract.book == self]
+    
 class Contract:
       
-      all_contracts=[]
+      all=[]
 
       def __init__(self, author, book, date, royalties ):
         if isinstance( book, Book ):
@@ -68,9 +69,9 @@ class Contract:
         else:
            raise ValueError("Royalties must be an integer")
 
-        Contract.all_contracts.append(self)
-
-
+        Contract.all.append(self)
+        
+      @classmethod
       def contracts_by_date(cls, date):
-        return [contract for contract in cls.all_contracts if contract.date == date]
- 
+         return [contract for contract in cls.all if contract.date == date]
+      
